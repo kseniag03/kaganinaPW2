@@ -8,6 +8,14 @@
 import UIKit
 
 extension UIView {
+    
+    public var viewWidth: CGFloat {
+        return self.frame.size.width
+    }
+    
+    public var viewHeight: CGFloat {
+        return self.frame.size.height
+    }
 
     @discardableResult
     func pinLeft(to superview: UIView, _ const: Int = 0) -> NSLayoutConstraint {
@@ -17,7 +25,6 @@ extension UIView {
             constant: CGFloat(const)
         )
         constraint.isActive = true
-
         return constraint
     }
 
@@ -29,7 +36,6 @@ extension UIView {
             constant: CGFloat(const * -1)
         )
         constraint.isActive = true
-
         return constraint
     }
 
@@ -41,7 +47,6 @@ extension UIView {
             constant: CGFloat(const)
         )
         constraint.isActive = true
-
         return constraint
     }
 
@@ -64,7 +69,6 @@ extension UIView {
             constant: CGFloat(const * -1)
         )
         constraint.isActive = true
-
         return constraint
     }
 
@@ -76,7 +80,6 @@ extension UIView {
             constant: CGFloat(const)
         )
         constraint.isActive = true
-
         return constraint
     }
 
@@ -88,7 +91,6 @@ extension UIView {
             constant: CGFloat(const)
         )
         constraint.isActive = true
-
         return constraint
     }
 
@@ -113,42 +115,19 @@ extension UIView {
 }
 
 final class WelcomeViewController: UIViewController {
+
     private let commentLabel = UILabel()
     private let valueLabel = UILabel()
-    
+
     private let incrementButton = UIButton()
-    
+
     private let commentView = UIView()
-    
+
     private var value: Int = 0
-    
-    private func setupIncrementButton() {
-        incrementButton.setTitle("Increment", for: .normal)
-        incrementButton.setTitleColor(.black, for: .normal)
-        incrementButton.layer.cornerRadius = 12
-        incrementButton.titleLabel?.font = .systemFont(ofSize: 16.0, weight: .medium)
-        incrementButton.backgroundColor = .white
-        
-        //incrementButton.layer.applyShadow()
-        
-        self.view.addSubview(incrementButton)
-        incrementButton.setHeight(48)
-        incrementButton.pinTop(to: self.view.centerYAnchor)
-        
-        incrementButton.pinLeft(to: self.view, 24)
-        incrementButton.pinRight(to: self.view, 24)
-        
-        incrementButton.addTarget(self, action:
-                                    #selector(incrementButtonPressedAnimated), for: .touchUpInside)
-    }
-    
-    private func setupValueLabel() {
-        valueLabel.font = .systemFont(ofSize: 40.0, weight: .bold)
-        valueLabel.textColor = .black
-        valueLabel.text = "\(value)"
-        self.view.addSubview(valueLabel)
-        valueLabel.pinBottom(to: self.view, 16)
-        valueLabel.pinCenter(to: self.view)
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupView()
     }
 
     private func setupView() {
@@ -159,28 +138,77 @@ final class WelcomeViewController: UIViewController {
         setupMenuButtons()
     }
 
+    private func setupIncrementButton() {
+        incrementButton.setTitle("Increment", for: .normal)
+        incrementButton.setTitleColor(.black, for: .normal)
+        incrementButton.layer.cornerRadius = 12
+        incrementButton.titleLabel?.font = .systemFont(ofSize: 16.0, weight: .medium)
+        incrementButton.backgroundColor = .white
+
+        //incrementButton.layer.applyShadow()
+
+        self.view.addSubview(incrementButton)
+        incrementButton.setHeight(Int(self.view.viewHeight / 20))
+        incrementButton.pinTop(to: self.view.centerYAnchor)
+        incrementButton.pinLeft(to: self.view, Int(self.view.viewWidth / 10))
+        incrementButton.pinRight(to: self.view, Int(self.view.viewWidth / 10))
+        
+        incrementButton.addTarget(self, action:
+                                    #selector(incrementButtonPressed), for: .touchUpInside)
+    }
+
+    private func setupValueLabel() {
+        valueLabel.font = .systemFont(ofSize: 40.0, weight: .bold)
+        valueLabel.textColor = .black
+        valueLabel.text = "\(value)"
+
+        self.view.addSubview(valueLabel)
+        valueLabel.setHeight(Int(self.view.viewHeight / 20))
+        valueLabel.pinBottom(to: self.view,
+                             Int(self.view.viewHeight / 2 + incrementButton.viewHeight + 10))
+        valueLabel.pinCenter(to: self.view)
+    }
+
     private func setupCommentView() {
-        commentView.backgroundColor = .red
+        commentView.backgroundColor = .white
         commentView.layer.cornerRadius = 12
-        view.addSubview(commentView)
-        //commentView.pinTop(to: self.view.safeAreaLayoutGuide.topAnchor)
-        commentView.pinTop(to: self.view.topAnchor)
-        
-        commentView.pinLeft(to: self.view, 24)
-        commentView.pinRight(to: self.view, 24)
-        
+
+        self.view.addSubview(commentView)
+        commentView.setHeight(Int(self.view.viewHeight / 30))
+        commentView.pinTop(to: self.view.safeAreaLayoutGuide.topAnchor)
+        commentView.pinLeft(to: self.view, Int(self.view.viewWidth / 10))
+        commentView.pinRight(to: self.view, Int(self.view.viewWidth / 10))
+
         commentLabel.font = .systemFont(ofSize: 14.0, weight: .regular)
         commentLabel.textColor = .systemGray
         commentLabel.numberOfLines = 0
         commentLabel.textAlignment = .center
+
         commentView.addSubview(commentLabel)
-        
-        commentLabel.pinTop(to: self.view, 16)
-        commentLabel.pinLeft(to: self.view, 16)
-        commentLabel.pinBottom(to: self.view, 16)
-        commentLabel.pinRight(to: self.view, 16)
-        
-        //updateCommentLabel(value: 75)
+        commentLabel.pinTop(to: commentView, 5)
+        commentLabel.pinLeft(to: commentView, 5)
+        commentLabel.pinRight(to: commentView, 5)
+        commentLabel.pinBottom(to: commentView, 5)
+    }
+
+    @objc
+    private func incrementButtonPressed() {
+        value += 1
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        updateUI()
+    }
+
+    func updateUI() {
+        UIView.transition(
+            with: self.view,
+            duration: 0.5,
+            options: .transitionCrossDissolve,
+            animations: {
+                self.valueLabel.text = "\(self.value)"
+                self.updateCommentLabel(value: self.value)
+            }
+        )
     }
 
     func updateCommentLabel(value: Int) {
@@ -206,28 +234,9 @@ final class WelcomeViewController: UIViewController {
         case 90...100:
             commentLabel.text = "100!! to the moon!!"
         default:
+            commentLabel.text = ". . ."
             break
         }
-    }
-
-    @objc
-    private func incrementButtonPressedAnimated() {
-        value += 1
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
-        
-        /*UIView.animate(withDuration: 5, animations: {
-            //self.updateUI()
-         })*/
-        
-        UIView.transition(with: self.view, duration: 5, animations: {
-            self.updateUI()
-         })
-        
-    }
-    
-    func updateUI() {
-        valueLabel.text = "\(value)"
     }
 
     private func makeMenuButton(title: String) -> UIButton {
@@ -242,25 +251,18 @@ final class WelcomeViewController: UIViewController {
     }
 
     private func setupMenuButtons() {
-        let colorsButton = makeMenuButton(title: "# ")
-        let notesButton = makeMenuButton(title: "$")
-        let newsButton = makeMenuButton(title: "% ")
-        
-        let buttonsSV = UIStackView(arrangedSubviews:
-                                        [colorsButton, notesButton, newsButton])
+        let colorsButton = makeMenuButton(title: "🎨")
+        let notesButton = makeMenuButton(title: "✏")
+        let newsButton = makeMenuButton(title: "📰")
+
+        let buttonsSV = UIStackView(arrangedSubviews: [colorsButton, notesButton, newsButton])
         buttonsSV.spacing = 12
         buttonsSV.axis = .horizontal
         buttonsSV.distribution = .fillEqually
+
         self.view.addSubview(buttonsSV)
-        
-        buttonsSV.pinLeft(to: self.view, 24)
-        buttonsSV.pinRight(to: self.view, 24)
-        
-        buttonsSV.pinBottom(to: self.view, 24)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupView()
+        buttonsSV.pinLeft(to: self.view, Int(self.view.viewWidth / 10))
+        buttonsSV.pinRight(to: self.view, Int(self.view.viewWidth / 10))
+        buttonsSV.pinBottom(to: self.view, Int(self.view.viewHeight / 10))
     }
 }
