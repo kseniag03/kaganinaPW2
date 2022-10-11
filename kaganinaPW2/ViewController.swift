@@ -145,17 +145,14 @@ final class WelcomeViewController: UIViewController {
         incrementButton.titleLabel?.font = .systemFont(ofSize: 16.0, weight: .medium)
         incrementButton.backgroundColor = .white
 
-        //incrementButton.layer.applyShadow()
         incrementButton.layer.shadowColor = CGColor(
-            red: 1,
+            red: 0,
             green: 0,
             blue: 0,
             alpha: 1
         )
-        incrementButton.layer.shadowOffset = CGSize(width: 1, height: 1)
-        incrementButton.layer.shadowOpacity = 0.5
-        //incrementButton.layer.shadowPath
-        //incrementButton.layer.shadowRadius
+        incrementButton.layer.shadowOffset = CGSize(width: 0.25, height: 0.5)
+        incrementButton.layer.shadowOpacity = 0.25
 
         self.view.addSubview(incrementButton)
         incrementButton.setHeight(Int(self.view.viewHeight / 20))
@@ -217,6 +214,17 @@ final class WelcomeViewController: UIViewController {
             animations: {
                 self.valueLabel.text = "\(self.value)"
                 self.updateCommentLabel(value: self.value)
+                self.incrementButton.layer.shadowOffset = CGSize(width: 1, height: 2)
+                self.incrementButton.layer.shadowOpacity = 0.5
+            }
+        )
+        UIView.transition(
+            with: self.view,
+            duration: 0.5,
+            options: .transitionCrossDissolve,
+            animations: {
+                self.incrementButton.layer.shadowOffset = CGSize(width: 0.25, height: 0.5)
+                self.incrementButton.layer.shadowOpacity = 0.25
             }
         )
     }
