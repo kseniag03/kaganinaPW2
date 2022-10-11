@@ -146,6 +146,16 @@ final class WelcomeViewController: UIViewController {
         incrementButton.backgroundColor = .white
 
         //incrementButton.layer.applyShadow()
+        incrementButton.layer.shadowColor = CGColor(
+            red: 1,
+            green: 0,
+            blue: 0,
+            alpha: 1
+        )
+        incrementButton.layer.shadowOffset = CGSize(width: 1, height: 1)
+        incrementButton.layer.shadowOpacity = 0.5
+        //incrementButton.layer.shadowPath
+        //incrementButton.layer.shadowRadius
 
         self.view.addSubview(incrementButton)
         incrementButton.setHeight(Int(self.view.viewHeight / 20))
