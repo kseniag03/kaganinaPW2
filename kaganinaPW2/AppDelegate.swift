@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  kaganinaPW2
 //
-//  Created by Юлия Бакурская on 11.10.2022.
+//  Created by Ксения Ганина on 11.10.2022.
 //
 
 import UIKit
